@@ -14,6 +14,7 @@
     --green:#1c7c54;
     --green-dark:#145c3e;
     --red:#a4262c;
+    --red-soft:#c0392b;
     --bg:#e9edf2;
     --panel:#ffffff;
     --line:#d5dce5;
@@ -240,6 +241,96 @@
   }
   .actions-row{display:flex;justify-content:center;}
 
+  /* ===== دکمه تأیید — حالت ابری و حالت تیک‌دار ===== */
+  .issue-btn{
+    position:relative;
+    width:100%;
+    padding:14px 24px;
+    border:none;border-radius:8px;
+    font-family:inherit;font-size:13px;font-weight:700;
+    cursor:pointer;
+    transition:all .4s cubic-bezier(.4,0,.2,1);
+    display:flex;align-items:center;justify-content:center;gap:10px;
+    overflow:hidden;
+  }
+  .issue-btn.state-idle{
+    background:var(--green);color:#fff;
+    box-shadow:0 2px 8px rgba(28,124,84,.25);
+  }
+  .issue-btn.state-idle:hover{
+    background:var(--green-dark);
+    box-shadow:0 4px 14px rgba(28,124,84,.35);
+    transform:translateY(-1px);
+  }
+  .issue-btn.state-cloud{
+    background:linear-gradient(135deg,#c0392b 0%,#a4262c 100%);
+    color:#fff;
+    box-shadow:0 6px 24px rgba(164,38,44,.45), 0 0 0 4px rgba(164,38,44,.12);
+    cursor:default;
+    animation:cloudPulse 2s ease-in-out infinite;
+  }
+  @keyframes cloudPulse{
+    0%,100%{box-shadow:0 6px 24px rgba(164,38,44,.45), 0 0 0 4px rgba(164,38,44,.12);}
+    50%{box-shadow:0 8px 30px rgba(164,38,44,.6), 0 0 0 8px rgba(164,38,44,.08);}
+  }
+  .issue-btn.state-check{
+    background:linear-gradient(135deg,#1c7c54 0%,#145c3e 100%);
+    color:#fff;
+    box-shadow:0 4px 16px rgba(28,124,84,.35), 0 0 0 3px rgba(28,124,84,.15);
+    cursor:default;
+  }
+  .issue-btn .cloud-icon{
+    display:inline-block;
+    width:20px;height:20px;
+    position:relative;
+    flex-shrink:0;
+  }
+  .issue-btn .cloud-icon::before{
+    content:'☁';
+    font-size:18px;line-height:1;
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    animation:cloudFloat 1.5s ease-in-out infinite;
+  }
+  @keyframes cloudFloat{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-3px);}
+  }
+  .issue-btn .check-icon{
+    display:inline-block;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:rgba(255,255,255,.25);
+    position:relative;
+    flex-shrink:0;
+    animation:checkPop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .issue-btn .check-icon::after{
+    content:'✓';
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:#fff;
+  }
+  @keyframes checkPop{
+    0%{transform:scale(0);opacity:0;}
+    100%{transform:scale(1);opacity:1;}
+  }
+
+  /* ===== فونت رسمی برای مبالغ ===== */
+  .amount{
+    font-family:'Segoe UI','Vazirmatn',Tahoma,sans-serif;
+    font-variant-numeric:tabular-nums;
+    font-feature-settings:"tnum";
+    letter-spacing:.5px;
+    font-weight:800;
+    direction:ltr;
+    unicode-bidi:embed;
+  }
+  .amount-total{color:var(--red);font-size:14px;}
+  .amount-paid{color:var(--green);font-size:14px;}
+  .amount-remaining{color:var(--red);font-size:15.5px;font-weight:900;}
+  .amount-unit{font-size:10.5px;font-weight:600;opacity:.75;margin-left:4px;}
+
   .modal-overlay{
     display:none;position:fixed;inset:0;
     background:rgba(11,37,69,.7);
@@ -277,7 +368,6 @@
     padding:20px 0 4px;line-height:1.9;
   }
 
-  /* استایل‌های اضافه برای بخش‌های جدید */
   .status-badge{
     display:inline-block;padding:4px 12px;border-radius:20px;
     font-size:10.5px;font-weight:600;
@@ -286,9 +376,6 @@
   .status-ok{background:#d4edda;color:var(--green-dark);}
   .status-debt{background:#f8d7da;color:var(--red);}
   .status-paid{background:#d4edda;color:var(--green-dark);}
-  .debt-total-row .val{color:var(--red);font-weight:700;}
-  .paid-row .val{color:var(--green);font-weight:700;}
-  .remaining-row .val{color:var(--red);font-weight:700;font-size:14px;}
 
   .edu-panel{
     background:#f7f9fb;
@@ -368,7 +455,7 @@
     <div id="infoPanel" style="margin-top:16px;">
       <div class="main-grid">
 
-        <!-- ستون راست: مشخصات دانشجو -->
+        <!-- ستون راست -->
         <div class="card-block" style="margin-bottom:0;">
           <div class="section-title">مشخصات دانشجو</div>
           <div class="holder-layout">
@@ -403,7 +490,6 @@
             </div>
           </div>
 
-          <!-- جزئیات فارغ‌التحصیلی -->
           <div class="section-title" style="margin-top:18px;">جزئیات فارغ‌التحصیلی</div>
           <div class="edu-panel">
             <div class="edu-line">
@@ -424,26 +510,25 @@
             </div>
           </div>
 
-          <!-- جزئیات بدهکاری -->
           <div class="section-title" style="margin-top:18px;">جزئیات بدهکاری و شهریه</div>
           <div class="detail-panel">
-            <div class="detail-line debt-total-row">
-              <span>کل بدهی</span>
-              <span class="val mono" id="rDebtTotal">—</span>
+            <div class="detail-line">
+              <span>کل شهریه</span>
+              <span class="val"><span class="amount amount-total" id="rDebtTotal">—</span><span class="amount-unit">میلیون تومان</span></span>
             </div>
-            <div class="detail-line paid-row">
+            <div class="detail-line">
               <span>مبلغ پرداخت‌شده</span>
-              <span class="val mono" id="rPaid">—</span>
+              <span class="val"><span class="amount amount-paid" id="rPaid">—</span><span class="amount-unit">میلیون تومان</span></span>
             </div>
-            <div class="detail-line remaining-row total">
+            <div class="detail-line total">
               <span>مانده بدهی</span>
-              <span class="val mono" id="rRemaining">—</span>
+              <span class="val"><span class="amount amount-remaining" id="rRemaining">—</span><span class="amount-unit">میلیون تومان</span></span>
             </div>
           </div>
 
         </div>
 
-        <!-- ستون چپ: تأیید نهایی -->
+        <!-- ستون چپ -->
         <div>
           <div class="card-block">
             <div class="section-title">وضعیت نهایی</div>
@@ -454,7 +539,7 @@
               </div>
               <div class="detail-line">
                 <span>شماره دانشجویی</span>
-                <span class="val mono" id="rStudentNo">—</span>
+                <span class="val rtl" id="rStudentNo">—</span>
               </div>
               <div class="detail-line total">
                 <span>قابل تأیید</span>
@@ -468,7 +553,9 @@
               <span>تأیید نهایی جهت فعال‌سازی خدمات</span>
             </div>
             <div class="actions-row">
-              <button class="btn btn-success" id="issueBtn" onclick="issueCard()">تأیید</button>
+              <button class="issue-btn state-idle" id="issueBtn" onclick="issueCard()">
+                <span id="issueBtnContent">تأیید</span>
+              </button>
             </div>
           </div>
         </div>
@@ -506,20 +593,17 @@ var database = {
     degree: "کارشناسی ارشد",
     field: "علوم ورزشی — آسیب‌شناسی ورزشی و حرکات اصلاحی",
     status: "شاغل به تحصیل",
-    studentNo: "6169633700",
+    studentNo: "در حال ایجاد",
     photo: "https://cdn.imgurl.ir/uploads/x12174_IMG-20260916-WA00093.jpg",
 
-    // فارغ‌التحصیلی
     gradStatus: "در انتظار تأیید سازمان مرکزی",
     gradTerm: "سال ۱۴۰۵ — نیم‌سال اول",
     gradDate: "1405/06/31",
     gradAuthority: "سازمان مرکزی دانشگاه تهران",
 
-    // بدهکاری
-    debtTotal: 690000000,
-    paid: 60000000,
+    debtTotal: 75,   // میلیون تومان
+    paid: 6,         // میلیون تومان
 
-    // وضعیت نهایی
     finalStatus: "در حال بررسی و تأیید نهایی",
     confirmable: "نیاز به تسویه بدهی"
   }
@@ -532,8 +616,8 @@ function faToEn(str){
   });
 }
 
-function formatMoney(num){
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ریال";
+function formatNumber(num){
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 var searching = false;
@@ -573,7 +657,6 @@ function searchHolder(){
   setTimeout(function(){
     document.getElementById('loaderBox').classList.remove('show');
 
-    // مشخصات دانشجو
     document.getElementById('rName').textContent = holder.name;
     document.getElementById('rFather').textContent = holder.father;
     document.getElementById('rNationalCode').textContent = holder.nationalCode;
@@ -582,7 +665,6 @@ function searchHolder(){
     document.getElementById('rStatus').textContent = holder.status;
     document.getElementById('rPhoto').src = holder.photo;
 
-    // فارغ‌التحصیلی
     var gradEl = document.getElementById('rGradStatus');
     gradEl.textContent = holder.gradStatus;
     gradEl.className = 'status-badge status-pending';
@@ -590,16 +672,17 @@ function searchHolder(){
     document.getElementById('rGradDate').textContent = holder.gradDate;
     document.getElementById('rGradAuthority').textContent = holder.gradAuthority;
 
-    // بدهکاری
     var remaining = holder.debtTotal - holder.paid;
-    document.getElementById('rDebtTotal').textContent = formatMoney(holder.debtTotal);
-    document.getElementById('rPaid').textContent = formatMoney(holder.paid);
-    document.getElementById('rRemaining').textContent = formatMoney(remaining);
+    document.getElementById('rDebtTotal').textContent = formatNumber(holder.debtTotal);
+    document.getElementById('rPaid').textContent = formatNumber(holder.paid);
+    document.getElementById('rRemaining').textContent = formatNumber(remaining);
 
-    // وضعیت نهایی
     document.getElementById('rFinalStatus').textContent = holder.finalStatus;
     document.getElementById('rStudentNo').textContent = holder.studentNo;
     document.getElementById('rConfirmable').textContent = holder.confirmable;
+
+    // ریست دکمه به حالت اولیه
+    resetIssueBtn();
 
     document.getElementById('infoPanel').style.display = 'block';
     setTimeout(function(){
@@ -617,21 +700,44 @@ document.getElementById('cid').addEventListener('keypress', function(e){
   if (e.key === 'Enter') searchHolder();
 });
 
-function issueCard(){
+/* ===== منطق دکمه تأیید: ابری → تیک‌دار ===== */
+var issueBusy = false;
+
+function resetIssueBtn(){
   var btn = document.getElementById('issueBtn');
+  var content = document.getElementById('issueBtnContent');
+  btn.className = 'issue-btn state-idle';
+  btn.disabled = false;
+  content.innerHTML = 'تأیید';
+  issueBusy = false;
+}
+
+function issueCard(){
+  if (issueBusy) return;
+  issueBusy = true;
+
+  var btn = document.getElementById('issueBtn');
+  var content = document.getElementById('issueBtnContent');
+
+  // مرحله ۱ — حالت ابری
+  btn.className = 'issue-btn state-cloud';
   btn.disabled = true;
-  btn.textContent = 'در حال ثبت...';
+  content.innerHTML = '<span class="cloud-icon"></span> دانشجوی دارای بدهی می‌باشد';
 
+  // مرحله ۲ — بعد از ۵ ثانیه حالت تیک‌دار
   setTimeout(function(){
-    var now = new Date();
-    var y = now.getFullYear().toString().slice(-4);
-    var rand = Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('trackingCode').textContent = 'UT-ALB-' + y + '-' + rand;
+    btn.className = 'issue-btn state-check';
+    content.innerHTML = '<span class="check-icon"></span> تأیید شد — دانشجو دارای بدهی';
 
-    document.getElementById('modal').classList.add('show');
-    btn.textContent = 'تأیید';
-    btn.disabled = false;
-  }, 1200);
+    // بعد از ۱.۵ ثانیه مودال کد پیگیری
+    setTimeout(function(){
+      var now = new Date();
+      var y = now.getFullYear().toString().slice(-4);
+      var rand = Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('trackingCode').textContent = 'UT-ALB-' + y + '-' + rand;
+      document.getElementById('modal').classList.add('show');
+    }, 1500);
+  }, 5000);
 }
 
 function closeModal(){
