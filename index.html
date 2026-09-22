@@ -241,7 +241,7 @@
   }
   .actions-row{display:flex;justify-content:center;}
 
-  /* ===== دکمه تأیید — حالت ابری و حالت تیک‌دار ===== */
+  /* ===== دکمه تأیید ===== */
   .issue-btn{
     position:relative;
     width:100%;
@@ -316,20 +316,26 @@
     100%{transform:scale(1);opacity:1;}
   }
 
-  /* ===== فونت رسمی برای مبالغ ===== */
+  /* ===== فونت رسمی مبالغ (ریالی) ===== */
   .amount{
-    font-family:'Segoe UI','Vazirmatn',Tahoma,sans-serif;
+    font-family:'Vazirmatn','Segoe UI',Tahoma,sans-serif;
     font-variant-numeric:tabular-nums;
-    font-feature-settings:"tnum";
-    letter-spacing:.5px;
+    font-feature-settings:"tnum" 1, "ss01" 1;
+    letter-spacing:1.2px;
     font-weight:800;
     direction:ltr;
     unicode-bidi:embed;
+    display:inline-block;
   }
-  .amount-total{color:var(--red);font-size:14px;}
-  .amount-paid{color:var(--green);font-size:14px;}
-  .amount-remaining{color:var(--red);font-size:15.5px;font-weight:900;}
-  .amount-unit{font-size:10.5px;font-weight:600;opacity:.75;margin-left:4px;}
+  .amount-total{color:var(--red);font-size:15px;font-weight:900;}
+  .amount-paid{color:var(--green);font-size:15px;font-weight:900;}
+  .amount-remaining{color:var(--red);font-size:16.5px;font-weight:900;}
+  .amount-unit{
+    font-size:10.5px;font-weight:600;
+    color:var(--text-dim);
+    margin-right:6px;
+    letter-spacing:0;
+  }
 
   .modal-overlay{
     display:none;position:fixed;inset:0;
@@ -455,7 +461,6 @@
     <div id="infoPanel" style="margin-top:16px;">
       <div class="main-grid">
 
-        <!-- ستون راست -->
         <div class="card-block" style="margin-bottom:0;">
           <div class="section-title">مشخصات دانشجو</div>
           <div class="holder-layout">
@@ -514,21 +519,20 @@
           <div class="detail-panel">
             <div class="detail-line">
               <span>کل شهریه</span>
-              <span class="val"><span class="amount amount-total" id="rDebtTotal">—</span><span class="amount-unit">میلیون تومان</span></span>
+              <span class="val"><span class="amount amount-total" id="rDebtTotal">—</span><span class="amount-unit">ریال</span></span>
             </div>
             <div class="detail-line">
               <span>مبلغ پرداخت‌شده</span>
-              <span class="val"><span class="amount amount-paid" id="rPaid">—</span><span class="amount-unit">میلیون تومان</span></span>
+              <span class="val"><span class="amount amount-paid" id="rPaid">—</span><span class="amount-unit">ریال</span></span>
             </div>
             <div class="detail-line total">
               <span>مانده بدهی</span>
-              <span class="val"><span class="amount amount-remaining" id="rRemaining">—</span><span class="amount-unit">میلیون تومان</span></span>
+              <span class="val"><span class="amount amount-remaining" id="rRemaining">—</span><span class="amount-unit">ریال</span></span>
             </div>
           </div>
 
         </div>
 
-        <!-- ستون چپ -->
         <div>
           <div class="card-block">
             <div class="section-title">وضعیت نهایی</div>
@@ -601,8 +605,8 @@ var database = {
     gradDate: "1405/06/31",
     gradAuthority: "سازمان مرکزی دانشگاه تهران",
 
-    debtTotal: 75,   // میلیون تومان
-    paid: 6,         // میلیون تومان
+    debtTotal: 750000000,
+    paid: 60000000,
 
     finalStatus: "در حال بررسی و تأیید نهایی",
     confirmable: "نیاز به تسویه بدهی"
@@ -681,7 +685,6 @@ function searchHolder(){
     document.getElementById('rStudentNo').textContent = holder.studentNo;
     document.getElementById('rConfirmable').textContent = holder.confirmable;
 
-    // ریست دکمه به حالت اولیه
     resetIssueBtn();
 
     document.getElementById('infoPanel').style.display = 'block';
@@ -700,7 +703,6 @@ document.getElementById('cid').addEventListener('keypress', function(e){
   if (e.key === 'Enter') searchHolder();
 });
 
-/* ===== منطق دکمه تأیید: ابری → تیک‌دار ===== */
 var issueBusy = false;
 
 function resetIssueBtn(){
@@ -719,17 +721,14 @@ function issueCard(){
   var btn = document.getElementById('issueBtn');
   var content = document.getElementById('issueBtnContent');
 
-  // مرحله ۱ — حالت ابری
   btn.className = 'issue-btn state-cloud';
   btn.disabled = true;
   content.innerHTML = '<span class="cloud-icon"></span> دانشجوی دارای بدهی می‌باشد';
 
-  // مرحله ۲ — بعد از ۵ ثانیه حالت تیک‌دار
   setTimeout(function(){
     btn.className = 'issue-btn state-check';
     content.innerHTML = '<span class="check-icon"></span> تأیید شد — دانشجو دارای بدهی';
 
-    // بعد از ۱.۵ ثانیه مودال کد پیگیری
     setTimeout(function(){
       var now = new Date();
       var y = now.getFullYear().toString().slice(-4);
