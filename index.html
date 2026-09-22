@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سامانه جامع استعلام پردیس البرز دانشگاه تهران</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',Tahoma,sans-serif;}
+  :root{
+    --navy:#0b2545;
+    --navy-2:#12335c;
+    --gold:#b08d3f;
+    --green:#1c7c54;
+    --green-dark:#145c3e;
+    --red:#a4262c;
+    --bg:#e9edf2;
+    --panel:#ffffff;
+    --line:#d5dce5;
+    --line-2:#e6ebf1;
+    --text:#1b2432;
+    --text-mid:#48536a;
+    --text-dim:#8992a3;
+  }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-size:13px;
+    min-height:100vh;
+    padding:28px 20px;
+  }
+  .wrap{max-width:1320px;margin:0 auto;}
+
+  .header{
+    background:linear-gradient(180deg,#0b2545 0%,#12335c 100%);
+    color:#fff;
+    padding:18px 24px;
+    border-radius:8px 8px 0 0;
+    border-bottom:3px solid var(--gold);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+  }
+  .header-left{display:flex;align-items:center;gap:14px;}
+  .header-mark{
+    width:56px;height:56px;
+    background:#fff;
+    border-radius:6px;
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+    flex-shrink:0;
+    box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  .header-mark img{width:100%;height:100%;object-fit:contain;}
+  .header h1{font-size:15px;font-weight:700;letter-spacing:.2px;}
+  .header p{font-size:11px;opacity:.75;margin-top:3px;}
+  .header p a{color:var(--gold);text-decoration:none;}
+  .header-user{
+    font-size:11.5px;
+    padding:6px 14px;
+    border:1px solid rgba(176,141,63,.55);
+    border-radius:4px;
+    background:rgba(255,255,255,.04);
+    text-align:center;
+  }
+  .header-user span{color:var(--gold);font-weight:600;display:block;margin-top:2px;}
+
+  .form-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 8px 8px;
+    padding:24px 28px;
+  }
+  .card-block{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px 20px;
+    margin-bottom:12px;
+  }
+  .section-title{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--navy);
+    margin-bottom:14px;
+    padding-bottom:9px;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:8px;
+  }
+  .section-title::before{
+    content:'';width:3px;height:13px;background:var(--gold);border-radius:2px;
+  }
+  .section-title .sub{
+    font-size:10.5px;font-weight:500;color:var(--text-dim);margin-right:auto;
+  }
+
+  .search-row{
+    display:flex;gap:12px;align-items:flex-end;margin-bottom:4px;
+  }
+  .field{flex:1;max-width:420px;}
+  .field label{
+    display:block;font-size:11.5px;font-weight:600;
+    color:var(--text-mid);margin-bottom:6px;
+  }
+  .field input{
+    width:100%;
+    padding:11px 14px;
+    border:1px solid var(--line);
+    border-radius:5px;
+    font-family:inherit;
+    font-size:13px;
+    background:#fff;
+    transition:all .15s;
+    letter-spacing:1px;
+  }
+  .field input::placeholder{color:#b8c0cc;font-weight:400;letter-spacing:0;}
+  .field input:focus{
+    outline:none;border-color:var(--navy);
+    box-shadow:0 0 0 3px rgba(11,37,69,.08);
+  }
+  .field input.ltr{direction:ltr;text-align:left;}
+  .field input:disabled{background:#f4f6f9;color:var(--text-dim);}
+
+  .btn{
+    padding:11px 30px;
+    border:none;border-radius:5px;
+    font-family:inherit;font-size:12.5px;font-weight:600;
+    cursor:pointer;transition:all .15s;white-space:nowrap;
+  }
+  .btn-primary{background:var(--navy);color:#fff;}
+  .btn-primary:hover:not(:disabled){background:var(--navy-2);}
+  .btn-primary:disabled{background:#a8b2c2;cursor:not-allowed;}
+  .btn-success{background:var(--green);color:#fff;padding:13px 48px;font-size:13px;font-weight:700;}
+  .btn-success:hover:not(:disabled){background:var(--green-dark);}
+  .btn-success:disabled{background:#b8c2cf;cursor:not-allowed;}
+
+  .loader-box{
+    display:none;
+    align-items:center;
+    gap:14px;
+    padding:20px 22px;
+    background:#f4f6f9;
+    border:1px solid var(--line);
+    border-right:3px solid var(--gold);
+    border-radius:6px;
+    margin-top:16px;
+    font-size:12.5px;
+    color:var(--text-mid);
+  }
+  .loader-box.show{display:flex;}
+  .spinner{
+    width:22px;height:22px;
+    border:3px solid #d5dce5;
+    border-top-color:var(--navy);
+    border-radius:50%;
+    animation:spin .8s linear infinite;
+    flex-shrink:0;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  #infoPanel{display:none;}
+  .main-grid{
+    display:grid;
+    grid-template-columns:1.5fr 1fr;
+    gap:14px;
+  }
+
+  .holder-layout{
+    display:grid;
+    grid-template-columns:118px 1fr;
+    gap:18px;
+    align-items:start;
+  }
+  .photo-frame{
+    width:118px;height:155px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    background:#f6f8fb;
+    position:relative;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .photo-frame::after{
+    content:'عکس ۳×۴';
+    position:absolute;color:var(--text-dim);font-size:9.5px;
+  }
+  .photo-frame img{
+    width:100%;height:100%;object-fit:cover;
+    position:relative;z-index:1;
+  }
+
+  .holder-fields{display:flex;flex-direction:column;gap:1px;}
+  .field-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:8px 0;border-bottom:1px solid var(--line-2);gap:10px;
+  }
+  .field-row:last-child{border-bottom:none;}
+  .field-label{
+    font-size:11px;color:var(--text-dim);font-weight:500;white-space:nowrap;
+  }
+  .field-value{
+    font-size:12.5px;font-weight:600;color:var(--text);
+    text-align:left;direction:ltr;
+  }
+  .field-value.rtl{direction:rtl;text-align:left;}
+  .field-value.success{color:var(--green);}
+  .field-value.mono{font-family:'Courier New',monospace;letter-spacing:1.5px;}
+
+  .detail-panel{
+    background:#f7f9fb;
+    border:1px solid var(--line);
+    border-right:3px solid var(--navy-2);
+    border-radius:6px;
+    padding:4px 16px;
+  }
+  .detail-line{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:11px 0;font-size:12px;color:var(--text-mid);
+    border-bottom:1px solid var(--line-2);
+  }
+  .detail-line:last-child{border-bottom:none;}
+  .detail-line .val{
+    color:var(--text);font-weight:600;direction:ltr;
+  }
+  .detail-line .val.mono{font-family:'Courier New',monospace;letter-spacing:1.5px;}
+  .detail-line.total{
+    font-size:13px;font-weight:700;color:var(--navy);
+    padding-top:14px;margin-top:6px;border-top:2px solid var(--navy);
+  }
+  .detail-line.total .val{color:var(--gold);font-size:13.5px;}
+
+  .confirm-row{
+    display:flex;align-items:center;justify-content:center;
+    padding:13px 15px;background:#f7f9fb;
+    border:1px solid var(--line);border-radius:6px;
+    font-size:12px;color:var(--text-mid);margin-bottom:12px;
+    font-weight:600;
+  }
+  .actions-row{display:flex;justify-content:center;}
+
+  .modal-overlay{
+    display:none;position:fixed;inset:0;
+    background:rgba(11,37,69,.7);
+    backdrop-filter:blur(3px);
+    z-index:1000;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:8px;max-width:440px;width:100%;
+    padding:28px;text-align:center;
+    border-top:4px solid var(--green);
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
+  }
+  .success-mark{
+    width:54px;height:54px;background:var(--green);color:#fff;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    margin:0 auto 16px;font-size:27px;font-weight:700;
+  }
+  .modal h2{color:var(--navy);font-size:15.5px;margin-bottom:8px;font-weight:700;}
+  .modal > p{color:#5b6675;font-size:12px;line-height:2;margin-bottom:18px;}
+  .tracking-box{
+    background:#f7f9fb;border:1px solid var(--line);
+    border-right:3px solid var(--gold);border-radius:6px;
+    padding:14px;margin:16px 0;
+  }
+  .tracking-label{font-size:10.5px;color:var(--text-dim);margin-bottom:8px;}
+  .tracking-code{
+    font-size:19px;font-weight:800;color:var(--navy);
+    letter-spacing:2px;direction:ltr;
+    font-family:'Courier New',monospace;
+  }
+
+  footer{
+    text-align:center;font-size:11px;color:var(--text-dim);
+    padding:20px 0 4px;line-height:1.9;
+  }
+
+  /* استایل‌های اضافه برای بخش‌های جدید */
+  .status-badge{
+    display:inline-block;padding:4px 12px;border-radius:20px;
+    font-size:10.5px;font-weight:600;
+  }
+  .status-pending{background:#fff3cd;color:#856404;}
+  .status-ok{background:#d4edda;color:var(--green-dark);}
+  .status-debt{background:#f8d7da;color:var(--red);}
+  .status-paid{background:#d4edda;color:var(--green-dark);}
+  .debt-total-row .val{color:var(--red);font-weight:700;}
+  .paid-row .val{color:var(--green);font-weight:700;}
+  .remaining-row .val{color:var(--red);font-weight:700;font-size:14px;}
+
+  .edu-panel{
+    background:#f7f9fb;
+    border:1px solid var(--line);
+    border-right:3px solid var(--gold);
+    border-radius:6px;
+    padding:4px 16px;
+  }
+  .edu-line{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;font-size:12px;color:var(--text-mid);
+    border-bottom:1px solid var(--line-2);
+  }
+  .edu-line:last-child{border-bottom:none;}
+  .edu-line .val{color:var(--text);font-weight:600;}
+  .edu-line .val.rtl{direction:rtl;}
+  .edu-line .val.mono{font-family:'Courier New',monospace;letter-spacing:1px;}
+
+  @media (max-width:900px){
+    .main-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:640px){
+    body{padding:12px 10px;}
+    .wrap{max-width:100%;}
+    .header{flex-direction:column;gap:12px;text-align:center;}
+    .search-row{flex-direction:column;align-items:stretch;}
+    .field{max-width:100%;}
+    .btn{width:100%;}
+    .holder-layout{grid-template-columns:100px 1fr;gap:12px;}
+    .photo-frame{width:100px;height:132px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="header">
+    <div class="header-left">
+      <div class="header-mark">
+        <img src="https://cdn.imgurl.ir/uploads/f666262_874656.jpg" alt="لوگوی پردیس البرز">
+      </div>
+      <div>
+        <h1>پردیس البرز دانشگاه تهران</h1>
+        <p>سامانه جامع استعلام دانشجویان — وب‌سایت رسمی: <a href="https://alborz.ut.ac.ir" target="_blank">alborz.ut.ac.ir</a></p>
+      </div>
+    </div>
+    <div class="header-user">
+      کاربر جاری
+      <span>مأمور استعلام</span>
+    </div>
+  </header>
+
+  <div class="form-card">
+
+    <div class="section-title">
+      استعلام جامع دانشجو
+      <span class="sub">سامانه یکپارچه پردیس البرز — نسخه ۳.۰</span>
+    </div>
+
+    <div class="search-row">
+      <div class="field">
+        <label for="cid">کد ملی دانشجو</label>
+        <input type="text" id="cid" placeholder="کد ملی ۱۰ رقمی را وارد کنید" maxlength="10" class="ltr" autocomplete="off" inputmode="numeric">
+      </div>
+      <button class="btn btn-primary" id="searchBtn" onclick="searchHolder()">استعلام</button>
+    </div>
+
+    <div class="loader-box" id="loaderBox">
+      <div class="spinner"></div>
+      <div>
+        <div style="font-weight:600;color:var(--navy);">در حال استعلام از سامانه مرکزی پردیس البرز...</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">لطفاً تا دریافت پاسخ منتظر بمانید.</div>
+      </div>
+    </div>
+
+    <div id="infoPanel" style="margin-top:16px;">
+      <div class="main-grid">
+
+        <!-- ستون راست: مشخصات دانشجو -->
+        <div class="card-block" style="margin-bottom:0;">
+          <div class="section-title">مشخصات دانشجو</div>
+          <div class="holder-layout">
+            <div class="photo-frame">
+              <img id="rPhoto" src="" alt="عکس دانشجو">
+            </div>
+            <div class="holder-fields">
+              <div class="field-row">
+                <div class="field-label">نام و نام خانوادگی</div>
+                <div class="field-value rtl" id="rName">—</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">نام پدر</div>
+                <div class="field-value rtl" id="rFather">—</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">کد ملی</div>
+                <div class="field-value mono" id="rNationalCode">—</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">مقطع</div>
+                <div class="field-value rtl" id="rDegree">—</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">رشته و گرایش</div>
+                <div class="field-value rtl" id="rField">—</div>
+              </div>
+              <div class="field-row">
+                <div class="field-label">وضعیت تحصیلی</div>
+                <div class="field-value rtl success" id="rStatus">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- جزئیات فارغ‌التحصیلی -->
+          <div class="section-title" style="margin-top:18px;">جزئیات فارغ‌التحصیلی</div>
+          <div class="edu-panel">
+            <div class="edu-line">
+              <span>وضعیت</span>
+              <span class="val rtl"><span class="status-badge status-pending" id="rGradStatus">—</span></span>
+            </div>
+            <div class="edu-line">
+              <span>سال و نیمسال فارغ‌التحصیلی</span>
+              <span class="val rtl" id="rGradTerm">—</span>
+            </div>
+            <div class="edu-line">
+              <span>تاریخ فارغ‌التحصیلی</span>
+              <span class="val mono" id="rGradDate">—</span>
+            </div>
+            <div class="edu-line">
+              <span>مرجع تأیید</span>
+              <span class="val rtl" id="rGradAuthority">—</span>
+            </div>
+          </div>
+
+          <!-- جزئیات بدهکاری -->
+          <div class="section-title" style="margin-top:18px;">جزئیات بدهکاری و شهریه</div>
+          <div class="detail-panel">
+            <div class="detail-line debt-total-row">
+              <span>کل بدهی</span>
+              <span class="val mono" id="rDebtTotal">—</span>
+            </div>
+            <div class="detail-line paid-row">
+              <span>مبلغ پرداخت‌شده</span>
+              <span class="val mono" id="rPaid">—</span>
+            </div>
+            <div class="detail-line remaining-row total">
+              <span>مانده بدهی</span>
+              <span class="val mono" id="rRemaining">—</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ستون چپ: تأیید نهایی -->
+        <div>
+          <div class="card-block">
+            <div class="section-title">وضعیت نهایی</div>
+            <div class="detail-panel">
+              <div class="detail-line">
+                <span>وضعیت پرونده</span>
+                <span class="val rtl" id="rFinalStatus">—</span>
+              </div>
+              <div class="detail-line">
+                <span>شماره دانشجویی</span>
+                <span class="val mono" id="rStudentNo">—</span>
+              </div>
+              <div class="detail-line total">
+                <span>قابل تأیید</span>
+                <span class="val" id="rConfirmable">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-block" style="margin-bottom:0;">
+            <div class="confirm-row">
+              <span>تأیید نهایی جهت فعال‌سازی خدمات</span>
+            </div>
+            <div class="actions-row">
+              <button class="btn btn-success" id="issueBtn" onclick="issueCard()">تأیید</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © پردیس البرز دانشگاه تهران — سامانه جامع استعلام دانشجویان<br>
+    وب‌سایت رسمی: alborz.ut.ac.ir | کلیه استعلام‌ها در سامانه مرکزی ثبت و قابل رهگیری می‌باشد.
+  </footer>
+</div>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="success-mark">✓</div>
+    <h2>استعلام با موفقیت ثبت شد</h2>
+    <p>نتیجه استعلام دانشجو در سامانه مرکزی پردیس البرز ثبت گردید و کد پیگیری زیر جهت مراجعات بعدی صادر شد.</p>
+    <div class="tracking-box">
+      <div class="tracking-label">کد پیگیری استعلام</div>
+      <div class="tracking-code" id="trackingCode">—</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" onclick="closeModal()">متوجه شدم</button>
+  </div>
+</div>
+
+<script>
+var database = {
+  "6169633700": {
+    name: "محمدرضا یوسفی",
+    father: "علی‌اکبر",
+    nationalCode: "6169633700",
+    degree: "کارشناسی ارشد",
+    field: "علوم ورزشی — آسیب‌شناسی ورزشی و حرکات اصلاحی",
+    status: "شاغل به تحصیل",
+    studentNo: "6169633700",
+    photo: "https://cdn.imgurl.ir/uploads/x12174_IMG-20260916-WA00093.jpg",
+
+    // فارغ‌التحصیلی
+    gradStatus: "در انتظار تأیید سازمان مرکزی",
+    gradTerm: "سال ۱۴۰۵ — نیم‌سال اول",
+    gradDate: "1405/06/31",
+    gradAuthority: "سازمان مرکزی دانشگاه تهران",
+
+    // بدهکاری
+    debtTotal: 690000000,
+    paid: 60000000,
+
+    // وضعیت نهایی
+    finalStatus: "در حال بررسی و تأیید نهایی",
+    confirmable: "نیاز به تسویه بدهی"
+  }
+};
+
+function faToEn(str){
+  var fa='۰۱۲۳۴۵۶۷۸۹', ar='٠١٢٣٤٥٦٧٨٩';
+  return String(str).replace(/[۰-۹٠-٩]/g, function(d){
+    return fa.indexOf(d) > -1 ? fa.indexOf(d) : ar.indexOf(d);
+  });
+}
+
+function formatMoney(num){
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ریال";
+}
+
+var searching = false;
+
+function searchHolder(){
+  if (searching) return;
+
+  var input = document.getElementById('cid');
+  var btn = document.getElementById('searchBtn');
+  var code = faToEn(input.value.trim()).replace(/\D/g,'');
+
+  if (!code) {
+    alert('لطفاً کد ملی را وارد نمایید.');
+    input.focus();
+    return;
+  }
+  if (code.length !== 10) {
+    alert('کد ملی باید ۱۰ رقم باشد.');
+    input.focus();
+    return;
+  }
+
+  var holder = database[code];
+  if (!holder) {
+    alert('اطلاعاتی با این کد ملی یافت نشد. لطفاً کد را کنترل نمایید.');
+    return;
+  }
+
+  searching = true;
+  btn.disabled = true;
+  btn.textContent = 'در حال استعلام...';
+  input.disabled = true;
+
+  document.getElementById('infoPanel').style.display = 'none';
+  document.getElementById('loaderBox').classList.add('show');
+
+  setTimeout(function(){
+    document.getElementById('loaderBox').classList.remove('show');
+
+    // مشخصات دانشجو
+    document.getElementById('rName').textContent = holder.name;
+    document.getElementById('rFather').textContent = holder.father;
+    document.getElementById('rNationalCode').textContent = holder.nationalCode;
+    document.getElementById('rDegree').textContent = holder.degree;
+    document.getElementById('rField').textContent = holder.field;
+    document.getElementById('rStatus').textContent = holder.status;
+    document.getElementById('rPhoto').src = holder.photo;
+
+    // فارغ‌التحصیلی
+    var gradEl = document.getElementById('rGradStatus');
+    gradEl.textContent = holder.gradStatus;
+    gradEl.className = 'status-badge status-pending';
+    document.getElementById('rGradTerm').textContent = holder.gradTerm;
+    document.getElementById('rGradDate').textContent = holder.gradDate;
+    document.getElementById('rGradAuthority').textContent = holder.gradAuthority;
+
+    // بدهکاری
+    var remaining = holder.debtTotal - holder.paid;
+    document.getElementById('rDebtTotal').textContent = formatMoney(holder.debtTotal);
+    document.getElementById('rPaid').textContent = formatMoney(holder.paid);
+    document.getElementById('rRemaining').textContent = formatMoney(remaining);
+
+    // وضعیت نهایی
+    document.getElementById('rFinalStatus').textContent = holder.finalStatus;
+    document.getElementById('rStudentNo').textContent = holder.studentNo;
+    document.getElementById('rConfirmable').textContent = holder.confirmable;
+
+    document.getElementById('infoPanel').style.display = 'block';
+    setTimeout(function(){
+      document.getElementById('infoPanel').scrollIntoView({behavior:'smooth', block:'start'});
+    }, 100);
+
+    searching = false;
+    btn.disabled = false;
+    btn.textContent = 'استعلام';
+    input.disabled = false;
+  }, 2400);
+}
+
+document.getElementById('cid').addEventListener('keypress', function(e){
+  if (e.key === 'Enter') searchHolder();
+});
+
+function issueCard(){
+  var btn = document.getElementById('issueBtn');
+  btn.disabled = true;
+  btn.textContent = 'در حال ثبت...';
+
+  setTimeout(function(){
+    var now = new Date();
+    var y = now.getFullYear().toString().slice(-4);
+    var rand = Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('trackingCode').textContent = 'UT-ALB-' + y + '-' + rand;
+
+    document.getElementById('modal').classList.add('show');
+    btn.textContent = 'تأیید';
+    btn.disabled = false;
+  }, 1200);
+}
+
+function closeModal(){
+  document.getElementById('modal').classList.remove('show');
+}
+
+document.getElementById('modal').addEventListener('click', function(e){
+  if (e.target.id === 'modal') closeModal();
+});
+</script>
+
+</body>
+</html>
